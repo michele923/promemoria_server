@@ -1,0 +1,18 @@
+{
+  "USER": {
+    "USERNAME": "user",
+    "PASSWORD": "1"
+  },
+  "FLASK": {
+    "app_secret_key": "12345678"
+  },
+  "DATABASE": {
+    "db_path": "files/db.sqlite",
+    "table_name": "posts",
+    "columns": {
+      "id": ["id", "INTEGER PRIMARY KEY AUTOINCREMENT"],
+      "title": ["titolo", "TEXT"],
+      "description": ["spiegazione", "TEXT"]
+    }
+  }
+}
