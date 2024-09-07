@@ -1,9 +1,9 @@
 import sqlite3
 
-connection = sqlite3.connect('db.db')
+connection = sqlite3.connect('files/db.sqlite')
 
-with open('memoria.sql') as f:
+with open('files/db_init.sql') as f:
     connection.executescript(f.read())
     connection.commit()
-    
+
 connection.close()

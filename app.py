@@ -1,11 +1,10 @@
 from flask import Flask, render_template, redirect, request, url_for, session, flash
 import sqlite3
 
-
 app = Flask(__name__)
 app.secret_key = '12345678'  # chiave segreta per gestire le sessioni
-USERNAME = 'michele923'
-PASSWORD = 'prusamk3s+'
+USERNAME = 'user'
+PASSWORD = '1'
 
 
 @app.route('/')
