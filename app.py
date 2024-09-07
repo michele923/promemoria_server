@@ -1,10 +1,8 @@
-from flask import Flask, render_template, redirect, request, url_for, session, flash
-import sqlite3
+from flask import Flask, render_template, redirect,  url_for, flash, request, session
+from parameters import params
 
 app = Flask(__name__)
-app.secret_key = '12345678'  # chiave segreta per gestire le sessioni
-USERNAME = 'user'
-PASSWORD = '1'
+app.secret_key = params.app_secret_key
 
 
 @app.route('/')
@@ -14,40 +12,47 @@ def loginpage():
 
 @app.route('/login', methods=['POST'])
 def login():
+    
     username = request.form['username']
     password = request.form['password']
-    if username == USERNAME and password == PASSWORD:
+    
+    if username == params.USERNAME and password == params.PASSWORD:
+        
         session['logged_in'] = True
         return redirect(url_for('index'))
+    
     else:
+        
         flash('Il nome utente o la password sono errati')
+        
         return redirect(url_for('loginpage'))
 
 
 @app.route('/protected')
 def index():
+    
     if not session.get('logged_in'):
+        
         return redirect(url_for('loginpage'))
-    connection = sqlite3.connect('db.db')
-    connection.row_factory = sqlite3.Row
-    posts = connection.execute('SELECT * FROM posts').fetchall()
-    connection.close()
+
+    posts = params.database.get_posts()
+
     return render_template('index.html', posts=posts)
 
 
 @app.route('/logout')
 def logout():
+    
     session.pop('logged_in', None)  # Usa pop per rimuovere la chiave
+    
     return redirect(url_for('loginpage'))
 
 
 @app.route('/delete/<int:id>', methods=['POST'])
 def delete(id):
-    connection = sqlite3.connect('db.db')
-    connection.row_factory = sqlite3.Row
-    connection.execute('DELETE FROM posts WHERE id=?', (id,))
-    connection.commit()
-    connection.close()
+
+    params.database.delete_post(id)
+
     return redirect('/protected')
 
 
@@ -55,17 +60,9 @@ def delete(id):
 def create():
     if request.method == 'POST':
         titolo = request.form.get('titolo')
-        # Assicurati che il nome sia 'spiegazione'
         spiegazione = request.form.get('spiegazione')
-        connection = sqlite3.connect('db.db')
-        connection.row_factory = sqlite3.Row
-        connection.execute('INSERT INTO posts(titolo, spiegazione) VALUES (?,?)',
-                           (titolo, spiegazione))  # Usa 'spiegazione'
-        connection.commit()
-        connection.close()
+
+        params.database.add_post(titolo, spiegazione)
+
         return redirect('/protected')
     return render_template('create.html')
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
