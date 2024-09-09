@@ -31,11 +31,14 @@ def login():
 @app.route('/protected')
 def index():
 
+    sort = request.args.get("sort", "-1")
+    sort = int(sort)
+
     if not session.get('logged_in'):
 
         return redirect(url_for('loginpage'))
 
-    posts = params.database.get_posts()[::-1]
+    posts = params.database.get_posts()[::sort]
 
     return render_template('index.html', posts=posts)
 
