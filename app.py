@@ -12,39 +12,39 @@ def loginpage():
 
 @app.route('/login', methods=['POST'])
 def login():
-    
+
     username = request.form['username']
     password = request.form['password']
-    
+
     if username == params.USERNAME and password == params.PASSWORD:
-        
+
         session['logged_in'] = True
         return redirect(url_for('index'))
-    
+
     else:
-        
+
         flash('Il nome utente o la password sono errati')
-        
+
         return redirect(url_for('loginpage'))
 
 
 @app.route('/protected')
 def index():
-    
+
     if not session.get('logged_in'):
-        
+
         return redirect(url_for('loginpage'))
 
-    posts = params.database.get_posts()
+    posts = params.database.get_posts()[::-1]
 
     return render_template('index.html', posts=posts)
 
 
 @app.route('/logout')
 def logout():
-    
+
     session.pop('logged_in', None)  # Usa pop per rimuovere la chiave
-    
+
     return redirect(url_for('loginpage'))
 
 
